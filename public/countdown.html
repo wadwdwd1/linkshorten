@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    let seconds = 10;
+    const shortId = window.location.pathname.split('/').pop();
+
+    async function getLink() {
+      const res = await fetch(`/api/get-link/${shortId}`);
+      if (!res.ok) {
+        document.body.innerHTML = "<p>Link not found.</p>";
+        return;
+      }
+
+      const data = await res.json();
+      const targetUrl = data.url;
+      const countdown = document.getElementById("countdown");
+
+      const interval = setInterval(() => {
+        countdown.textContent = seconds;
+        seconds--;
+        if (seconds < 0) {
+          clearInterval(interval);
+          window.location.href = targetUrl;
+        }
+      }, 1000);
+    }
+
+    window.onload = getLink;
+  </script>
+</head>
+<body>
+  <h2>Redirecting in <span id="countdown">10</span> seconds...</h2>
+</body>
+</html>
